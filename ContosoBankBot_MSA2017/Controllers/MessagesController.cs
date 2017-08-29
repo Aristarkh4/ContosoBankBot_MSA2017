@@ -16,6 +16,9 @@ namespace ContosoBankBot_MSA2017
         /// </summary>
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
+            // Set activity language to english
+            activity.Locale = "en-EN";
+
             if (activity.Type == ActivityTypes.Message)
             {
                 await Conversation.SendAsync(activity, () => new Dialogs.EchoDialog());
