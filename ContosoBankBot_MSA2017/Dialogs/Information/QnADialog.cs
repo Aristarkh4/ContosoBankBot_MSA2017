@@ -69,7 +69,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Information
                     context.Call(new ContactAgentDialog(), this.MessageReceivedAsync);
                     break;
                 case "Go back":
-                    context.Done<string>("menu");
+                    context.Done<object>(null);
                     break;
                 default:
                     await context.PostAsync("Didn't quite get it. Please try again.");
