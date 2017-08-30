@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 
-namespace ContosoBankBot_MSA2017.Dialogs.Account
+namespace ContosoBankBot_MSA2017.Dialogs.AdditionalFunctionality
 {
     [Serializable]
     public class StocksDialog : IDialog<object>

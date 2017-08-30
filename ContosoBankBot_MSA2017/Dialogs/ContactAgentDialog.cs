@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 
-namespace ContosoBankBot_MSA2017.Dialogs.AdditionalFunctionality
+namespace ContosoBankBot_MSA2017.Dialogs
 {
     [Serializable]
-    public class CurrencyDialog : IDialog<object>
+    public class ContactAgentDialog : IDialog<object>
     {
         public Task StartAsync(IDialogContext context)
         {

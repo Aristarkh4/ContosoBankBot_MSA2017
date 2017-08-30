@@ -22,11 +22,19 @@ namespace ContosoBankBot_MSA2017.Dialogs
 
             if (activity.Text == "menu")
             {
-                PromptDialog.Choice(
-                    context,
-                    AfterMenuChoiceAsync,
-                    (new string[] { "My Account", "FAQ", "Closest Banks", "Contact An Agent", "Exchange Rates", "Stocks" }),
-                    "Please select one of this options: ");
+                try
+                {
+                    PromptDialog.Choice(
+                        context,
+                        AfterMenuChoiceAsync,
+                        (new string[] { "My account", "Ask a question", "Closest banks", "Contact an agent", "Exchange rates", "Stocks" }),
+                        "Please select one of this options: ");
+                }
+                catch(TooManyAttemptsException e)
+                {
+                    await context.PostAsync("You attempted too many times, please type \"menu\" and try again.");
+                    context.Wait(MessageReceivedAsync);
+                }
             }
             else
             {
@@ -41,26 +49,27 @@ namespace ContosoBankBot_MSA2017.Dialogs
             
             switch (choice)
             {
-                case "My Account":
+                case "My account":
                     context.Call(new Account.AccountRootDialog(), this.MessageReceivedAsync);
                     break;
-                case "FAQ":
-                    context.Call(new Account.AccountRootDialog(), this.MessageReceivedAsync);
+                case "Ask a question":
+                    context.Call(new Information.QnADialog(), this.MessageReceivedAsync);
                     break;
-                case "Closest Banks":
-                    context.Call(new Account.AccountRootDialog(), this.MessageReceivedAsync);
+                case "Closest banks":
+                    context.Call(new Information.ClosestBankDialog(), this.MessageReceivedAsync);
                     break;
-                case "Contact An Agent":
-                    context.Call(new Account.AccountRootDialog(), this.MessageReceivedAsync);
+                case "Contact an agent":
+                    context.Call(new ContactAgentDialog(), this.MessageReceivedAsync);
                     break;
-                case "Exchange Rates":
-                    context.Call(new Account.AccountRootDialog(), this.MessageReceivedAsync);
+                case "Exchange rates":
+                    context.Call(new AdditionalFunctionality.CurrencyDialog(), this.MessageReceivedAsync);
                     break;
                 case "Stocks":
-                    context.Call(new Account.AccountRootDialog(), this.MessageReceivedAsync);
+                    context.Call(new AdditionalFunctionality.StocksDialog(), this.MessageReceivedAsync);
                     break;
                 default:
-                    await context.PostAsync("This functionality is not yet available, please type \"menu\" and choose another option.");
+                    await context.PostAsync("Didn't quite get it. Please try again.");
+                    context.Wait(MessageReceivedAsync);
                     break;
             }
             
