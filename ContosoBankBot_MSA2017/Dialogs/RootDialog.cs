@@ -28,7 +28,7 @@ namespace ContosoBankBot_MSA2017.Dialogs
                         context,
                         AfterMenuChoiceAsync,
                         (new string[] { "My account", "Ask a question", "Closest banks", "Contact an agent", "Exchange rates", "Stocks" }),
-                        "Please select one of this options: ");
+                        "Hello. How can I help you today?");
                 }
                 catch(TooManyAttemptsException e)
                 {

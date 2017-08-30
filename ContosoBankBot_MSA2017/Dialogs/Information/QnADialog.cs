@@ -11,38 +11,37 @@ namespace ContosoBankBot_MSA2017.Dialogs.Information
     [Serializable]
     public class QnADialog : IDialog<object>
     {
-        public Task StartAsync(IDialogContext context)
+        public async Task StartAsync(IDialogContext context)
         {
+            await context.PostAsync("What is your question?");
             context.Wait(MessageReceivedAsync);
-
-            return Task.CompletedTask;
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
-            try
-            {
-                PromptDialog.Text(
-                    context,
-                    AfterQuestionRecievedAsync,
-                    "What is your question?");
-            }
-            catch(TooManyAttemptsException e)
-            {
-                await context.PostAsync("You attempted too many times, please type \"menu\" and try again.");
-                context.Done<string>(null);
-            }
+            var activity = await result as Activity;
+            await AfterQuestionRecievedAsync(context, activity.Text);
         }
 
-        public async Task AfterQuestionRecievedAsync(IDialogContext context, IAwaitable<string> result)
+        public async Task AfterQuestionRecievedAsync(IDialogContext context, string result)
         {
-            var question = await result;
+            var question = result;
 
             await context.PostAsync("Your question is : \"" + question + "\". Let me see if we have an answer.");
 
             try
             {
-                await context.PostAsync(RequestAnswerFromQnAMaker(question));
+                // Get a response
+                string response = RequestAnswerFromQnAMaker(question);
+                // Check whether answer was found or not
+                if(response == "No good match found in the KB")
+                {
+                    await context.PostAsync("Sorry, I couldn't find anything.");
+                } else
+                {
+                    await context.PostAsync("The answer for your question is:\n" + response);
+                }
+                // Ask what to do next
                 PromptDialog.Choice(
                     context,
                     AfterQuestionAnsweredAsync,
@@ -63,13 +62,14 @@ namespace ContosoBankBot_MSA2017.Dialogs.Information
             switch (choice)
             {
                 case "Ask another question":
+                    await context.PostAsync("What is your question?");
                     context.Wait(MessageReceivedAsync);
                     break;
                 case "Contact an agent":
                     context.Call(new ContactAgentDialog(), this.MessageReceivedAsync);
                     break;
                 case "Go back":
-                    context.Call(new RootDialog(), this.MessageReceivedAsync);
+                    context.Done<string>("menu");
                     break;
                 default:
                     await context.PostAsync("Didn't quite get it. Please try again.");
