@@ -101,8 +101,32 @@ namespace ContosoBankBot_MSA2017.Dialogs.AdditionalFunctionality
                 await context.PostAsync("Sorry, something went wrong. Please try again. Ensure that the currencies you select are not misspelt.");
             }
 
-            await context.PostAsync("What currency exchange rate do you want to know? (USD, GBP, etc.)");
-            context.Wait(MessageReceivedAsync);
+            // Ask what to do next
+            PromptDialog.Choice(
+                context,
+                AfterCurrancyRateGivenAsync,
+                (new string[] { "Get another currency exchange rate", "Go back" }),
+                "What do you want to do now?");
+        }
+
+        private async Task AfterCurrancyRateGivenAsync(IDialogContext context, IAwaitable<string> result)
+        {
+            var choice = await result;
+
+            switch (choice)
+            {
+                case "Get another currency exchange rate":
+                    await context.PostAsync("What currency rate do you want to know? (USD, GBP, etc.)");
+                    context.Wait(MessageReceivedAsync);
+                    break;
+                case "Go back":
+                    context.Done<object>(null);
+                    break;
+                default:
+                    await context.PostAsync("Didn't quite get it. Please try again.");
+                    context.Wait(MessageReceivedAsync);
+                    break;
+            }
         }
     }
 }
