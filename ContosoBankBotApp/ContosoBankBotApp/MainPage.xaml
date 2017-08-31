@@ -4,11 +4,7 @@
              xmlns:local="clr-namespace:ContosoBankBotApp"
              x:Class="ContosoBankBotApp.MainPage">
 
-    <ContentView>
-
-        <Label Text="Contoso Bank Bot" FontSize="20" ></Label>
-
+    <ContentView
         <WebView x:Name="webview" Source="https://webchat.botframework.com/embed/ContosoBankBotMSA2017?s=7XIV-Kvb3OA.cwA.I9I.Y8h2HCS7qTwZ1fAc-G4co8Z9Z9aQ9N8YpYV2gpe-HJE"></WebView>
-
     </ContentView>
 </ContentPage>
