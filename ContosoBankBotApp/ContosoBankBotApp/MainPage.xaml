@@ -4,12 +4,11 @@
              xmlns:local="clr-namespace:ContosoBankBotApp"
              x:Class="ContosoBankBotApp.MainPage">
 
-    <StackLayout WidthRequest="300" HeightRequest="500" >
+    <ContentView>
 
         <Label Text="Contoso Bank Bot" FontSize="20" ></Label>
 
-        <WebView x:Name="webview" Source="https://webchat.botframework.com/embed/ContosoBankBotMSA2017?s=7XIV-Kvb3OA.cwA.I9I.Y8h2HCS7qTwZ1fAc-G4co8Z9Z9aQ9N8YpYV2gpe-HJE"
-                 WidthRequest="300" HeightRequest=" 300"></WebView>
+        <WebView x:Name="webview" Source="https://webchat.botframework.com/embed/ContosoBankBotMSA2017?s=7XIV-Kvb3OA.cwA.I9I.Y8h2HCS7qTwZ1fAc-G4co8Z9Z9aQ9N8YpYV2gpe-HJE"></WebView>
 
-    </StackLayout>
+    </ContentView>
 </ContentPage>
