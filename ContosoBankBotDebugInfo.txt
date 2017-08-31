@@ -1,0 +1,4 @@
+Bot Framework Info :
+Name - ContosoBankBotMSA2017
+App ID - d9a91323-5f27-48f7-90a8-8e40d1923f90
+password - YQjLFJDJctNi1RwFwNHiiWP
