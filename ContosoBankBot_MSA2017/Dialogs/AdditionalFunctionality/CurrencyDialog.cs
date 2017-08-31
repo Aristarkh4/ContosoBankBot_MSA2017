@@ -23,10 +23,19 @@ namespace ContosoBankBot_MSA2017.Dialogs.AdditionalFunctionality
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
-            var activity = await result as Activity;
-            goalCurrency = activity.Text;
 
-            await AfterGoalCurrencyReceivedAsync(context);
+            var activity = await result as Activity;
+
+            if (activity == null)
+            {
+                await context.PostAsync("What currency rate do you want to know? (USD, GBP, etc.)");
+                context.Wait(MessageReceivedAsync);
+            }
+            else
+            {
+                goalCurrency = activity.Text;
+                await AfterGoalCurrencyReceivedAsync(context);
+            }    
         }
 
         private async Task AfterGoalCurrencyReceivedAsync(IDialogContext context)

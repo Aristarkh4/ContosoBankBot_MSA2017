@@ -20,7 +20,16 @@ namespace ContosoBankBot_MSA2017.Dialogs.Information
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
-            await AfterQuestionRecievedAsync(context, activity.Text);
+
+            if (activity == null)
+            {
+                await context.PostAsync("What is your question?");
+                context.Wait(MessageReceivedAsync);
+            }
+            else
+            {
+                await AfterQuestionRecievedAsync(context, activity.Text);
+            }
         }
 
         private async Task AfterQuestionRecievedAsync(IDialogContext context, string result)
@@ -82,8 +91,9 @@ namespace ContosoBankBot_MSA2017.Dialogs.Information
         {
             string responseString = string.Empty;
 
-            var knowledgebaseId = "0a4a012c-e0e2-49b6-8913-f49c6aa1f14d"; // Use knowledge base id created.
-            var qnamakerSubscriptionKey = "228aaf337deb4bdb9b5d9340ec78358a"; //Use subscription key assigned to you.
+            // Use knowledge base id and subscription key of QnA base on actual company FAQ
+            var knowledgebaseId = "0a4a012c-e0e2-49b6-8913-f49c6aa1f14d"; 
+            var qnamakerSubscriptionKey = "228aaf337deb4bdb9b5d9340ec78358a"; 
 
             //Build the URI
             Uri qnamakerUriBase = new Uri("https://westus.api.cognitive.microsoft.com/qnamaker/v1.0");
