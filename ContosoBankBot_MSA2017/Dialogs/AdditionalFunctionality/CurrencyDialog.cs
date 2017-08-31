@@ -101,7 +101,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.AdditionalFunctionality
                 await context.PostAsync("Sorry, something went wrong. Please try again. Ensure that the currencies you select are not misspelt.");
             }
 
-            await context.PostAsync("What currency rate do you want to know? (USD, GBP, etc.)");
+            await context.PostAsync("What currency exchange rate do you want to know? (USD, GBP, etc.)");
             context.Wait(MessageReceivedAsync);
         }
     }
