@@ -1,6 +1,7 @@
 ﻿using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -79,21 +80,26 @@ namespace ContosoBankBot_MSA2017.Dialogs.AdditionalFunctionality
             await context.PostAsync("Got it. Give me a second to get the latest exchange rate.");
 
             string url = "http://api.fixer.io/latest?base=" + baseCurrency + "&symbols=" + goalCurrency;
-            /*try
-            {*/
-
-            string responseString = null;
-
-            using (var client = new HttpClient())
+            try
             {
-                var response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
+                string responseString = null;
+                using (var client = new HttpClient())
+                {
+                    var response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
 
-                responseString = await response.Content.ReadAsStringAsync();
+                    responseString = await response.Content.ReadAsStringAsync();
+                }
+
+                var ratesList = JObject.Parse(responseString);
+                var rates = ratesList.Value<JObject>("rates");
+                var goalCurrencyRate = rates.Value<string>(goalCurrency);
+                await context.PostAsync("The exhange rate of " + goalCurrency + " with base " + baseCurrency + " is: " + goalCurrencyRate);
             }
-
-            /* }
-             catch { }*/
+             catch
+            {
+                await context.PostAsync("Sorry, something went wrong. Please try again. Ensure that the currencies you select are not misspelt.");
+            }
 
             await context.PostAsync("What currency rate do you want to know? (USD, GBP, etc.)");
             context.Wait(MessageReceivedAsync);
