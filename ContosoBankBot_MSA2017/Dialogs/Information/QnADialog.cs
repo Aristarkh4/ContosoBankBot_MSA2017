@@ -23,7 +23,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Information
             await AfterQuestionRecievedAsync(context, activity.Text);
         }
 
-        public async Task AfterQuestionRecievedAsync(IDialogContext context, string result)
+        private async Task AfterQuestionRecievedAsync(IDialogContext context, string result)
         {
             var question = result;
 
@@ -55,7 +55,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Information
             }
         }
 
-        public async Task AfterQuestionAnsweredAsync(IDialogContext context, IAwaitable<string> result)
+        private async Task AfterQuestionAnsweredAsync(IDialogContext context, IAwaitable<string> result)
         {
             var choice = await result;
 
@@ -106,22 +106,13 @@ namespace ContosoBankBot_MSA2017.Dialogs.Information
 
             try
             {
-                var response = JsonConvert.DeserializeObject<QnAMakerResult>(responseString);
+                var response = JsonConvert.DeserializeObject<Models.QnAMakerResult>(responseString);
                 return response.Answer;
             }
             catch
             {
                 throw new Exception("Unable to deserialize QnA Maker response string.");
             }
-        }
-
-        private class QnAMakerResult
-        {
-            [JsonProperty(PropertyName = "answer")]
-            public string Answer { get; set; }
-
-            [JsonProperty(PropertyName = "score")]
-            public double Score { get; set; }
         }
     }
 }
