@@ -8,24 +8,128 @@ namespace ContosoBankBot_MSA2017.Dialogs
     [Serializable]
     public class ContactAgentDialog : IDialog<object>
     {
-        public Task StartAsync(IDialogContext context)
-        {
-            context.Wait(MessageReceivedAsync);
+        private string userFullname;
+        private string userEmail;
+        private string enquiryTopic;
+        private string enquiry;
 
-            return Task.CompletedTask;
+        public async Task StartAsync(IDialogContext context)
+        {
+            try
+            {
+                PromptDialog.Confirm(
+                        context,
+                        ContactAnAgentAsync,
+                        "Do you want to contact an agent?");
+            }
+            catch (TooManyAttemptsException e)
+            {
+                await context.PostAsync("You attempted too many times, please start over again.");
+                context.Wait(MessageReceivedAsync);
+            }
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
-            var activity = await result as Activity;
+            try
+            {
+                PromptDialog.Confirm(
+                        context,
+                        ContactAnAgentAsync,
+                        "Do you want to contact an agent?");
+            }
+            catch (TooManyAttemptsException e)
+            {
+                await context.PostAsync("You attempted too many times, please start over again.");
+                context.Wait(MessageReceivedAsync);
+            }
+        }
 
-            // calculate something for us to return
-            int length = (activity.Text ?? string.Empty).Length;
+        private async Task ContactAnAgentAsync(IDialogContext context, IAwaitable<bool> result)
+        {
+            bool contactAnAgent = await result;
 
-            // return our reply to the user
-            await context.PostAsync($"You sent {activity.Text} which was {length} characters");
+            if(contactAnAgent)
+            {
+                try
+                {
+                    PromptDialog.Text(
+                    context,
+                    AfterGetUserFullnameAsync,
+                    "Please give us your full name.");
+                }
+                catch (TooManyAttemptsException e)
+                {
+                    await context.PostAsync("You attempted too many times, please start over again.");
+                    context.Wait(MessageReceivedAsync);
+                }
+            } else
+            {
+                // Exit the dialog
+                context.Done<object>(null);
+            }
+        }
 
-            context.Wait(MessageReceivedAsync);
+        private async Task AfterGetUserFullnameAsync(IDialogContext context, IAwaitable<string> result)
+        {
+            userFullname = await result;
+
+            try
+            {
+                PromptDialog.Text(
+                context,
+                AfterGetUserEmailAsync,
+                "Please give us your email adress.");
+            }
+            catch (TooManyAttemptsException e)
+            {
+                await context.PostAsync("You attempted too many times, please start over again.");
+                context.Wait(MessageReceivedAsync);
+            }
+        }
+
+        private async Task AfterGetUserEmailAsync(IDialogContext context, IAwaitable<string> result)
+        {
+            userEmail = await result;
+
+            try
+            {
+                PromptDialog.Text(
+                context,
+                AfterGetEnquiryTopicAsync,
+                "What is the topic of your enquiry?");
+            }
+            catch (TooManyAttemptsException e)
+            {
+                await context.PostAsync("You attempted too many times, please start over again.");
+                context.Wait(MessageReceivedAsync);
+            }
+        }
+
+        private async Task AfterGetEnquiryTopicAsync(IDialogContext context, IAwaitable<string> result)
+        {
+            enquiryTopic = await result;
+
+            try
+            {
+                PromptDialog.Text(
+                context,
+                AfterGetEnquiryAsync,
+                "What is your enquiry?");
+            }
+            catch (TooManyAttemptsException e)
+            {
+                await context.PostAsync("You attempted too many times, please start over again.");
+                context.Wait(MessageReceivedAsync);
+            }
+        }
+
+        private async Task AfterGetEnquiryAsync(IDialogContext context, IAwaitable<string> result)
+        {
+            enquiry = await result;
+
+            await context.PostAsync("Contacting an agent is not available in this version. Sorry for inconvenience.");
+            context.Done<object>(null);
         }
     }
 }
