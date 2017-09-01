@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using System.Collections.Generic;
+using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace ContosoBankBot_MSA2017.Dialogs.Information
 {
@@ -28,20 +30,27 @@ namespace ContosoBankBot_MSA2017.Dialogs.Information
                 await context.PostAsync("Got it. Please wait a second, I'll look for the branch adresses in your city.");
                 string cityName = activity.Text;
 
-                List<string> branchAddresses = RequestBranchAddressesAsync(cityName);
-                await context.PostAsync("Here is the list of Contoso Bank branches in your city:");
-                foreach (string branchAddress in branchAddresses)
+                List<string> branchAddresses = await RequestBranchAddressesAsync(cityName);
+                if(branchAddresses.Count == 0)
                 {
-                    await context.PostAsync(branchAddress);
+                    await context.PostAsync("Sorry, no branches were found.");
                 }
+                else
+                {
+                    await context.PostAsync("Here is the list of Contoso Bank branches in your city:");
+                    foreach (string branchAddress in branchAddresses)
+                    {
+                        await context.PostAsync(branchAddress);
+                    }
+                }
+                
 
                 try
                 {
                     PromptDialog.Choice(
                         context,
                         AfterAddressesFoundAsync,
-                        (new string[] { "Search for branches in another city", "Go back" })
-    
+                        (new string[] { "Search for branches in another city", "Go back" }),
                         "Did you find what you were looking for?");
                 }
                 catch(TooManyAttemptsException e)
@@ -72,9 +81,30 @@ namespace ContosoBankBot_MSA2017.Dialogs.Information
             }
         }
 
-        private List<string> RequestBranchAddressesAsync(string cityName)
+        private async Task<List<string>> RequestBranchAddressesAsync(string cityName)
         {
             List<string> branchAddresses = new List<string>();
+
+            string url = "http://contosobankbotmsa2017dataapp.azurewebsites.net/tables/branches?zumo-api-version=2.0.0";
+
+            try
+            {
+                Models.BankBranch[] branches;
+                using (var client = new HttpClient())
+                {
+                    string responseString = await client.GetStringAsync(new Uri(url));
+                    branches = JsonConvert.DeserializeObject<Models.BankBranch[]>(responseString);
+                }
+
+                foreach (Models.BankBranch branch in branches)
+                {
+                    if (branch.CityName == cityName)
+                    {
+                        branchAddresses.Add(branch.BranchAddress);
+                    }
+                }
+            }
+            catch { }
 
             return branchAddresses;
         }
