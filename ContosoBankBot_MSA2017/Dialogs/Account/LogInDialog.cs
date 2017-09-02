@@ -10,8 +10,8 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
     [Serializable]
     public class LogInDialog : IDialog<object>
     {
-        private BotData privateConversationData;
         private string accountId;
+        private string password;
 
         public async Task StartAsync(IDialogContext context)
         {
@@ -28,19 +28,30 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                 context.Wait(MessageReceivedAsync);
             } else
             {
-                privateConversationData = activity.GetStateClient().BotState.GetPrivateConversationData(activity.ChannelId, activity.Conversation.Id, activity.From.Id);
-                try
+                if(accountId != null && password != null)
                 {
-                    PromptDialog.Choice(
-                        context,
-                        AfterSelectingOptionAsync,
-                        (new string[] { "Log in", "Create new account", "Cancel"}),
-                        "Do you have an account?");
+                    var privateConversationData = activity.GetStateClient().BotState.GetPrivateConversationData(activity.ChannelId, activity.Conversation.Id,activity.From.Id);
+                    privateConversationData.SetProperty<string>("accountId", accountId);
+                    privateConversationData.SetProperty<string>("password", password);
+
+                    await context.PostAsync("Log in successful.");
+                    context.Done<object>(null);
                 }
-                catch (TooManyAttemptsException e)
+                else
                 {
-                    await context.PostAsync("You attempted too many times, please try again.");
-                    context.Wait(MessageReceivedAsync);
+                    try
+                    {
+                        PromptDialog.Choice(
+                            context,
+                            AfterSelectingOptionAsync,
+                            (new string[] { "Log in", "Create new account", "Cancel" }),
+                            "Do you have an account?");
+                    }
+                    catch (TooManyAttemptsException e)
+                    {
+                        await context.PostAsync("You attempted too many times, please try again.");
+                        context.Wait(MessageReceivedAsync);
+                    }
                 }
             }
         }
@@ -103,12 +114,12 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
 
         private async Task AfterGettingPasswordAsync(IDialogContext context, IAwaitable<string> result)
         {
-            string password = await result;
+            password = await result;
 
             if(await IsCorrectLogInAsync(accountId, password))
             {
-                privateConversationData.SetProperty<string>("accountId", accountId);
-                privateConversationData.SetProperty<string>("password", password);
+                await context.PostAsync("Please type something to finish log in.");
+                context.Wait(MessageReceivedAsync);
                 context.Done<object>(null);
             } else {
                 await context.PostAsync("The account ID and/or password you entered are incorrect. Please try again.");
