@@ -29,8 +29,6 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                 // Person did not yet log in during this conversation
                 if ((accountId == null) || (password == null) || (!await LogInDialog.IsCorrectLogInAsync(context, accountId, password))) 
                 {
-                    await context.PostAsync(accountId);
-                    await context.PostAsync(password);
                     await context.PostAsync("Please log in.");
                     context.Call(new LogInDialog(), this.MessageReceivedAsync);
                 }
