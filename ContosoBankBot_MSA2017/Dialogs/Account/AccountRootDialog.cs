@@ -28,7 +28,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                 string password = botData.GetProperty<string>("password");
 
                 // Person did not yet log in during this conversation
-                if(LogInDialog.isCorrectLogIn(accountId, password))
+                if(await LogInDialog.IsCorrectLogInAsync(accountId, password))
                 {
                     context.Call(new LogInDialog(), this.MessageReceivedAsync);
                 }
@@ -45,7 +45,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                     }
                     catch (TooManyAttemptsException e)
                     {
-                        await context.PostAsync("You attempted too many times, please type \"menu\" and try again.");
+                        await context.PostAsync("You attempted too many times, please try again.");
                         context.Wait(MessageReceivedAsync);
                     }
                 }

@@ -31,7 +31,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                 string password = botData.GetProperty<string>("password");
 
                 // Person did not yet log in during this conversation
-                if (LogInDialog.isCorrectLogIn(accountId, password))
+                if (await LogInDialog.IsCorrectLogInAsync(accountId, password))
                 {
                     context.Call(new LogInDialog(), this.MessageReceivedAsync);
                 }

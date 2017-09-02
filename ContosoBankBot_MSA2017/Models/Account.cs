@@ -17,7 +17,7 @@ namespace ContosoBankBot_MSA2017.Models
         public string AccountId { get; set; }
 
         [JsonProperty(PropertyName = "password")]
-        public string password { get; set; }
+        public string Password { get; set; }
 
         [JsonProperty(PropertyName = "balance")]
         public double Balance { get; set; }
