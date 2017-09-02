@@ -24,12 +24,10 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
             }
             else
             {
-                var stateClient = activity.GetStateClient();
-                BotData botData = await stateClient.BotState.GetPrivateConversationDataAsync(activity.ChannelId, activity.Conversation.Id, activity.From.Id);
+                await context.PostAsync("Checking the authorisation.");
 
-                await context.PostAsync("Checking the authorisation...");
-                string accountId = botData.GetProperty<string>("accountId");
-                string password = botData.GetProperty<string>("password");
+                string accountId = context.UserData.GetValueOrDefault<string>("accountId", null);
+                string password = context.UserData.GetValueOrDefault<string>("password", null);
 
                 // Person did not yet log in during this conversation
                 if ((accountId == null) || (password == null) || (!await LogInDialog.IsCorrectLogInAsync(context, accountId, password)))
