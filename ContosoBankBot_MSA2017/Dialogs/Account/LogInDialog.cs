@@ -30,9 +30,11 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
             {
                 if(accountId != null && password != null)
                 {
-                    var privateConversationData = activity.GetStateClient().BotState.GetPrivateConversationData(activity.ChannelId, activity.Conversation.Id,activity.From.Id);
+                    StateClient stateClient = activity.GetStateClient();
+                    var privateConversationData = stateClient.BotState.GetPrivateConversationData(activity.ChannelId, activity.Conversation.Id,activity.From.Id);
                     privateConversationData.SetProperty<string>("accountId", accountId);
                     privateConversationData.SetProperty<string>("password", password);
+                    stateClient.BotState.SetPrivateConversationData(activity.ChannelId, activity.Conversation.Id, activity.From.Id, privateConversationData);
 
                     await context.PostAsync("Log in successful.");
                     context.Done<object>(null);
@@ -115,8 +117,9 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
         private async Task AfterGettingPasswordAsync(IDialogContext context, IAwaitable<string> result)
         {
             password = await result;
+            await context.PostAsync("Got it. Wait a second, I will check your details.");
 
-            if(await IsCorrectLogInAsync(accountId, password))
+            if(await IsCorrectLogInAsync(context, accountId, password))
             {
                 await context.PostAsync("Please type something to finish log in.");
                 context.Wait(MessageReceivedAsync);
@@ -127,7 +130,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
             }
         }
 
-        public static async Task<bool> IsCorrectLogInAsync(string accountId, string password)
+        public static async Task<bool> IsCorrectLogInAsync(IDialogContext context, string accountId, string password)
         {
 
             bool isCorrectLogIn = false;
@@ -154,7 +157,9 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                     }
                 }
             }
-            catch { }
+            catch {
+                await context.PostAsync("Somehting went wrong, please try again.");
+            }
 
             return isCorrectLogIn;
         }
