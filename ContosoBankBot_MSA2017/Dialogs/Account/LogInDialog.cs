@@ -34,7 +34,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                     PromptDialog.Choice(
                         context,
                         AfterSelectingOptionAsync,
-                        (new string[] { "Log in", "Create new account" }),
+                        (new string[] { "Log in", "Create new account", "Cancel"}),
                         "Do you have an account?");
                 }
                 catch (TooManyAttemptsException e)
@@ -56,6 +56,9 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                     break;
                 case ("Create new account"):
                     context.Call(new CreateAnAccountDialog(), MessageReceivedAsync);
+                    break;
+                case ("Cancel"):
+                    context.Call(new RootDialog(), MessageReceivedAsync);
                     break;
                 default:
                     await context.PostAsync("Didn't quite get it. Please try again.");
