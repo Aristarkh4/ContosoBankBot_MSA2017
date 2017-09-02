@@ -4,6 +4,9 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using System.Net.Http;
 using Newtonsoft.Json;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web.Script.Serialization;
 
 namespace ContosoBankBot_MSA2017.Dialogs.Account
 {
@@ -111,14 +114,15 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                 Password = password,
                 Balance = 0
             };
-            var newAccountString = JsonConvert.SerializeObject(newAccount);
-
+            var newAccountString = new JavaScriptSerializer().Serialize(newAccount);
+            HttpContent httpContent = new StringContent(newAccountString, Encoding.UTF8, "application/json");
+            await context.PostAsync(newAccountString);
             string url = "http://contosobankbotmsa2017dataapp.azurewebsites.net/tables/accounts?zumo-api-version=2.0.0";
             try
             {
                 using (var client = new HttpClient())
                 {
-                    var response = await client.PostAsJsonAsync(new Uri(url), newAccountString);
+                    var response = await client.PostAsync(new Uri(url), httpContent);
                     response.EnsureSuccessStatusCode();
                 }
 
@@ -131,7 +135,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
             }
             catch
             {
-                await context.PostAsync("Somehting went wrong, please try again.");
+                await context.PostAsync("Something went wrong, please try again.");
                 context.Wait(MessageReceivedAsync);
             }
         }
