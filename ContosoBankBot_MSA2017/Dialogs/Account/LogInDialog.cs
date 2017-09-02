@@ -143,6 +143,10 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                         if(account.Password == password)
                         {
                             isCorrectLogIn = true;
+
+                            // Save the logined user info in the state
+                            context.UserData.SetValue("fullName", account.FullName);
+                            context.UserData.SetValue("email", account.Email);
                             break;
                         } 
                     }
