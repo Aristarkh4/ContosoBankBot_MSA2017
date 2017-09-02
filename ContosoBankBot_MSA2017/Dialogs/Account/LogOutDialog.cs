@@ -10,13 +10,11 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
     {
         public async Task StartAsync(IDialogContext context)
         {
-            await context.PostAsync("Sorry this functionality is not yet implemented.");
+            context.UserData.RemoveValue("accountId");
+            context.UserData.RemoveValue("password");
+
+            await context.PostAsync("Log out successful.");
             context.Done<object>(null);
-        }
-
-        private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
-        {
-
         }
     }
 }
