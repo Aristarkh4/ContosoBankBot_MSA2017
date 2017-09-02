@@ -31,10 +31,10 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                 if(accountId != null && password != null)
                 {
                     StateClient stateClient = activity.GetStateClient();
-                    var privateConversationData = stateClient.BotState.GetPrivateConversationData(activity.ChannelId, activity.Conversation.Id,activity.From.Id);
+                    var privateConversationData = await stateClient.BotState.GetPrivateConversationDataAsync(activity.ChannelId, activity.Conversation.Id,activity.From.Id);
                     privateConversationData.SetProperty<string>("accountId", accountId);
                     privateConversationData.SetProperty<string>("password", password);
-                    stateClient.BotState.SetPrivateConversationData(activity.ChannelId, activity.Conversation.Id, activity.From.Id, privateConversationData);
+                    await stateClient.BotState.SetPrivateConversationDataAsync(activity.ChannelId, activity.Conversation.Id, activity.From.Id, privateConversationData);
 
                     await context.PostAsync("Log in successful.");
                     context.Done<object>(null);
@@ -126,6 +126,8 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                 context.Done<object>(null);
             } else {
                 await context.PostAsync("The account ID and/or password you entered are incorrect. Please try again.");
+                accountId = null;
+                password = null;
                 context.Wait(MessageReceivedAsync);
             }
         }
