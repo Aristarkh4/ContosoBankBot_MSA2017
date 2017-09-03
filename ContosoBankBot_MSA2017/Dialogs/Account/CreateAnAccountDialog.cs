@@ -128,7 +128,6 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
             };
             var newAccountString = new JavaScriptSerializer().Serialize(newAccount);
             HttpContent httpContent = new StringContent(newAccountString, Encoding.UTF8, "application/json");
-            await context.PostAsync(newAccountString);
             string url = "http://contosobankbotmsa2017dataapp.azurewebsites.net/tables/accounts?zumo-api-version=2.0.0";
             try
             {
