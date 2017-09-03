@@ -16,7 +16,15 @@ namespace ContosoBankBot_MSA2017.Dialogs
     {
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
-            await this.MessageReceived(context, (IAwaitable<IMessageActivity>)result);
+            await context.PostAsync("How can I help you?");
+
+            if(await result == null)
+            {
+                context.Wait(MessageReceivedAsync);
+            } else
+            {
+                await this.MessageReceived(context, (IAwaitable<IMessageActivity>)result);
+            }
         }
 
         [LuisIntent("Hi")]
