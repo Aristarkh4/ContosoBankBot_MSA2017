@@ -123,7 +123,6 @@
     <Compile Include="Dialogs\Account\LogOutDialog.cs" />
     <Compile Include="Dialogs\Account\TransferFundsDialog.cs" />
     <Compile Include="Dialogs\AdditionalFunctionality\CurrencyDialog.cs" />
-    <Compile Include="Dialogs\AdditionalFunctionality\StocksDialog.cs" />
     <Compile Include="Dialogs\ContactAgentDialog.cs" />
     <Compile Include="Dialogs\Information\ClosestBankDialog.cs" />
     <Compile Include="Dialogs\Information\QnADialog.cs" />

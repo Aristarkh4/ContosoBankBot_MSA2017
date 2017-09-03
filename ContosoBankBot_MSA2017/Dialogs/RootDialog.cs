@@ -30,7 +30,7 @@ namespace ContosoBankBot_MSA2017.Dialogs
                     PromptDialog.Choice(
                         context,
                         AfterMenuChoiceAsync,
-                        (new string[] { "My account", "Ask a question", "Closest banks", "Contact an agent", "Exchange rates", "Stocks" }),
+                        (new string[] { "My account", "Ask a question", "Closest banks", "Contact an agent", "Exchange rates"}),
                         "What do you want to do today " + context.UserData.GetValueOrDefault<string>("fullName") + "?");
                 }
                 catch (TooManyAttemptsException e)
@@ -61,9 +61,6 @@ namespace ContosoBankBot_MSA2017.Dialogs
                     break;
                 case "Exchange rates":
                     context.Call(new AdditionalFunctionality.CurrencyDialog(), this.MessageReceivedAsync);
-                    break;
-                case "Stocks":
-                    context.Call(new AdditionalFunctionality.StocksDialog(), this.MessageReceivedAsync);
                     break;
                 default:
                     await context.PostAsync("Didn't quite get it. Please try again.");
