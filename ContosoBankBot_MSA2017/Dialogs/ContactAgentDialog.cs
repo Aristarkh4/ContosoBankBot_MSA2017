@@ -51,17 +51,23 @@ namespace ContosoBankBot_MSA2017.Dialogs
 
             if(contactAnAgent)
             {
-                try
+                if (context.UserData.ContainsKey("fullName")) {
+                    // Name is already in the save data
+                    await AfterGetUserFullnameAsync(context, new AwaitableFromItem<string>(context.UserData.GetValue<string>("fullName")));
+                } else
                 {
-                    PromptDialog.Text(
-                    context,
-                    AfterGetUserFullnameAsync,
-                    "Please give us your full name.");
-                }
-                catch (TooManyAttemptsException e)
-                {
-                    await context.PostAsync("You attempted too many times, please start over again.");
-                    context.Wait(MessageReceivedAsync);
+                    try
+                    {
+                        PromptDialog.Text(
+                        context,
+                        AfterGetUserFullnameAsync,
+                        "Please give us your full name.");
+                    }
+                    catch (TooManyAttemptsException e)
+                    {
+                        await context.PostAsync("You attempted too many times, please start over again.");
+                        context.Wait(MessageReceivedAsync);
+                    }
                 }
             } else
             {
@@ -74,17 +80,25 @@ namespace ContosoBankBot_MSA2017.Dialogs
         {
             userFullname = await result;
 
-            try
+            if (context.UserData.ContainsKey("email"))
             {
-                PromptDialog.Text(
-                context,
-                AfterGetUserEmailAsync,
-                "Please give us your email adress.");
+                // Email is already in the save data
+                await AfterGetUserFullnameAsync(context, new AwaitableFromItem<string>(context.UserData.GetValue<string>("email")));
             }
-            catch (TooManyAttemptsException e)
+            else
             {
-                await context.PostAsync("You attempted too many times, please start over again.");
-                context.Wait(MessageReceivedAsync);
+                try
+                {
+                    PromptDialog.Text(
+                    context,
+                    AfterGetUserEmailAsync,
+                    "Please give us your email adress.");
+                }
+                catch (TooManyAttemptsException e)
+                {
+                    await context.PostAsync("You attempted too many times, please start over again.");
+                    context.Wait(MessageReceivedAsync);
+                }
             }
         }
 
