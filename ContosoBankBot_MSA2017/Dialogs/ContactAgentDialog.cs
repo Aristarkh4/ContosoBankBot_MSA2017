@@ -83,7 +83,8 @@ namespace ContosoBankBot_MSA2017.Dialogs
             if (context.UserData.ContainsKey("email"))
             {
                 // Email is already in the save data
-                await AfterGetUserFullnameAsync(context, new AwaitableFromItem<string>(context.UserData.GetValue<string>("email")));
+                string email = context.UserData.GetValue<string>("email");
+                await AfterGetUserEmailAsync(context, new AwaitableFromItem<string>(email));
             }
             else
             {

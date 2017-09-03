@@ -12,6 +12,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
         {
             context.UserData.RemoveValue("accountId");
             context.UserData.RemoveValue("password");
+            context.UserData.RemoveValue("email");
 
             await context.PostAsync("Log out successful.");
             context.Done<object>(null);
