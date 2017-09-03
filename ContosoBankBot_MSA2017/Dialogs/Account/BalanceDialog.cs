@@ -12,6 +12,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
     {
         public async Task StartAsync(IDialogContext context)
         {
+            await context.PostAsync("Please enter somehting.");
             context.Wait(MessageReceivedAsync);
         }
 
