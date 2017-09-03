@@ -12,11 +12,12 @@ namespace ContosoBankBot_MSA2017.Dialogs.AdditionalFunctionality
     [Serializable]
     public class CurrencyDialog : IDialog<object>
     {
-        private string baseCurrency = "EUR";
+        private string  baseCurrency = "EUR";
         private string goalCurrency = "EUR";
 
         public async Task StartAsync(IDialogContext context)
         {
+            baseCurrency = context.UserData.GetValueOrDefault<string>("baseCurrency", "EUR");
             await context.PostAsync("What currency rate do you want to know? (USD, GBP, etc.)");
             context.Wait(MessageReceivedAsync);
         }
@@ -81,6 +82,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.AdditionalFunctionality
         private async Task AfterReceivingNewBaseCurrencyAsync(IDialogContext context, IAwaitable<string> result)
         {
             baseCurrency = await result;
+            context.UserData.SetValue<string>("BaseCurrency", baseCurrency);
             await GetGoalCurrencyRateAsync(context);
         }
 

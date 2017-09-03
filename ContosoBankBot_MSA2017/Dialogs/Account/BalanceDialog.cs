@@ -76,7 +76,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                     context,
                     AfterGettingBalanceAsync,
                     (new string[] { "Get the balance", "Go back" }),
-                    "What do you want to do?");
+                    "What do you want to do" + context.UserData.GetValue<string>("fullName") + "?");
             }
             catch (TooManyAttemptsException e)
             {

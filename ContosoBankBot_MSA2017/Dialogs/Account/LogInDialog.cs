@@ -124,7 +124,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
                 context.UserData.SetValue("accountId", accountId);
                 context.UserData.SetValue("password", password);
 
-                await context.PostAsync("Log in successful.");
+                await context.PostAsync("Log in successful. Hello again, " + context.UserData.GetValue<string>("fullName") + ".");
                 context.Done<object>(null);
             } else {
                 await context.PostAsync("The account ID and/or password you entered are incorrect. Please try again.");

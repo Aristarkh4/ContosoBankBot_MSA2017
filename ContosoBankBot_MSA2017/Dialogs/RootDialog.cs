@@ -20,7 +20,7 @@ namespace ContosoBankBot_MSA2017.Dialogs
 
             if (activity == null)
             {
-                await context.PostAsync("How can I help you?");
+                await context.PostAsync("Please type somehting.");
                 context.Wait(MessageReceivedAsync);
             }
             else
@@ -31,7 +31,7 @@ namespace ContosoBankBot_MSA2017.Dialogs
                         context,
                         AfterMenuChoiceAsync,
                         (new string[] { "My account", "Ask a question", "Closest banks", "Contact an agent", "Exchange rates", "Stocks" }),
-                        "What do you want to do today?");
+                        "What do you want to do today " + context.UserData.GetValueOrDefault<string>("fullName") + "?");
                 }
                 catch (TooManyAttemptsException e)
                 {
