@@ -9,11 +9,9 @@ namespace ContosoBankBot_MSA2017.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
-        public Task StartAsync(IDialogContext context)
+        public async Task StartAsync(IDialogContext context)
         {
             context.Wait(MessageReceivedAsync);
-
-            return Task.CompletedTask;
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
@@ -22,31 +20,22 @@ namespace ContosoBankBot_MSA2017.Dialogs
 
             if (activity == null)
             {
-                await context.PostAsync("Please type \"menu\".");
+                await context.PostAsync("How can I help you?");
                 context.Wait(MessageReceivedAsync);
             }
             else
             {
-                // Send a menu message
-                if (activity.Text == "menu")
+                try
                 {
-                    try
-                    {
-                        PromptDialog.Choice(
-                            context,
-                            AfterMenuChoiceAsync,
-                            (new string[] { "My account", "Ask a question", "Closest banks", "Contact an agent", "Exchange rates", "Stocks" }),
-                            "How can I help you?");
-                    }
-                    catch (TooManyAttemptsException e)
-                    {
-                        await context.PostAsync("You attempted too many times, please type \"menu\" and try again.");
-                        context.Wait(MessageReceivedAsync);
-                    }
+                    PromptDialog.Choice(
+                        context,
+                        AfterMenuChoiceAsync,
+                        (new string[] { "My account", "Ask a question", "Closest banks", "Contact an agent", "Exchange rates", "Stocks" }),
+                        "What do you want to do today?");
                 }
-                else
+                catch (TooManyAttemptsException e)
                 {
-                    await context.PostAsync("This functionality is not yet available, please type \"menu\".");
+                    await context.PostAsync("You attempted too many times, please try again.");
                     context.Wait(MessageReceivedAsync);
                 }
             }

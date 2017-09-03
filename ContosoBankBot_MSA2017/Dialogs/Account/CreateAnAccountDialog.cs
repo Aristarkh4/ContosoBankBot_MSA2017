@@ -20,7 +20,18 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
 
         public async Task StartAsync(IDialogContext context)
         {
-            context.Wait(MessageReceivedAsync);
+            try
+            {
+                PromptDialog.Text(
+                    context,
+                    AfterGettingFullNameAsync,
+                    "What is your full name?");
+            }
+            catch (TooManyAttemptsException e)
+            {
+                await context.PostAsync("You attempted too many times, please try again.");
+                context.Wait(MessageReceivedAsync);
+            }
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
@@ -28,6 +39,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
             var activity = await result as Activity;
             if (activity == null)
             {
+                await context.PostAsync("Please enter somehting.");
                 context.Wait(MessageReceivedAsync);
             }
             else

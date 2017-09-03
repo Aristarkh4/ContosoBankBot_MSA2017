@@ -20,6 +20,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
             var activity = await result as Activity;
             if (activity == null)
             {
+                await context.PostAsync("Please enter somehting.");
                 context.Wait(MessageReceivedAsync);
             }
             else

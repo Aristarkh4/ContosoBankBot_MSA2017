@@ -10,14 +10,42 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
     {
         public async Task StartAsync(IDialogContext context)
         {
-            context.Wait(MessageReceivedAsync);
+            await context.PostAsync("Checking the authorisation.");
+
+            string accountId = context.UserData.GetValueOrDefault<string>("accountId", null);
+            string password = context.UserData.GetValueOrDefault<string>("password", null);
+
+            // Person did not yet log in during this conversation
+            if ((accountId == null) || (password == null) || (!await LogInDialog.IsCorrectLogInAsync(context, accountId, password)))
+            {
+                await context.PostAsync("Please log in.");
+                context.Call(new LogInDialog(), this.MessageReceivedAsync);
+            }
+            else
+            {
+                // Show the account menu
+                try
+                {
+                    PromptDialog.Choice(
+                        context,
+                        AfterMenuChoiceAsync,
+                        (new string[] { "See the balance", "Transfer funds", "Log out", "Go back" }),
+                        "How can I help you?");
+                }
+                catch (TooManyAttemptsException e)
+                {
+                    await context.PostAsync("You attempted too many times, please try again.");
+                    context.Wait(MessageReceivedAsync);
+                }
+            }
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
             if (activity == null)
-            {
+            {;
+                await context.PostAsync("Please enter somehting.");
                 context.Wait(MessageReceivedAsync);
             } else
             {

@@ -14,7 +14,19 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
 
         public async Task StartAsync(IDialogContext context)
         {
-            context.Wait(MessageReceivedAsync);
+            try
+            {
+                PromptDialog.Choice(
+                    context,
+                    AfterSelectingOptionAsync,
+                    (new string[] { "Log in", "Create new account", "Cancel" }),
+                    "Do you have an account?");
+            }
+            catch (TooManyAttemptsException e)
+            {
+                await context.PostAsync("You attempted too many times, please try again.");
+                context.Wait(MessageReceivedAsync);
+            }
         }
 
         
@@ -24,6 +36,7 @@ namespace ContosoBankBot_MSA2017.Dialogs.Account
             var activity = await result as Activity;
             if(activity == null)
             {
+                await context.PostAsync("Please enter somehting.");
                 context.Wait(MessageReceivedAsync);
             } else
             {
