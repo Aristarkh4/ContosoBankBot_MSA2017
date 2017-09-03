@@ -22,7 +22,7 @@ namespace ContosoBankBot_MSA2017.Dialogs
         [LuisIntent("Hi")]
         private async Task HiAsync(IDialogContext context, LuisResult result)
         {
-            await context.PostAsync("Hello.");
+            await context.PostAsync("Hello. How can I help you?");
         }
 
         [LuisIntent("Menu")]
