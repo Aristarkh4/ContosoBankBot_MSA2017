@@ -10,7 +10,7 @@ using System.Web;
 
 namespace ContosoBankBot_MSA2017.Dialogs
 {
-    [LuisModel("07f01d70-6afe-4f20-a4c-edefb2fe1885", "d159562215684ecfadb708ff82d3c125")]
+    [LuisModel("07f01d70-6afe-4f20-a4cc-edefb2fe1885", "d159562215684ecfadb708ff82d3c125", domain : "westus.api.cognitive.microsoft.com", verbose : true)]
     [Serializable]
     public class LuisRootDialog : LuisDialog<object>
     {
